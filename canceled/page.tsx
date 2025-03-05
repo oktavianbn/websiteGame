@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { addDataUser } from "../../lib/database";
+import { addDataUser } from "../lib/database";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel, } from "@/components/ui/alert-dialog";
 import { Dialog, DialogPortal, DialogOverlay, DialogTrigger, DialogClose, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -25,7 +26,7 @@ export default function AuthUser() {
     } else {
       // logika sign up
       try {
-        addDataUser(username, password); // Pastikan parameter sesuai
+        addDataUser(username, password);
       } catch (error) {
         console.error("Error adding document: ", error);
         setUserName("");
@@ -64,7 +65,7 @@ export default function AuthUser() {
       h6Password.current?.classList.add("text-yellow-600");
       setPasswordConfirmText("Your password not strong!");
       setPasswordStrong(!PasswordStrong);
-      setIsOpen(isOpen);
+      setIsOpen(true);
     } else {
       inputPassword.current?.classList.add("border-gray-400");
       inputPassword.current?.classList.remove("border-red-600", "border-yellow-600");
@@ -73,9 +74,8 @@ export default function AuthUser() {
     }
   }
   if (PasswordStrong == true) {
-    dataAddAndGet();
+    // dataAddAndGet();
   } else {
-
   }
 
   return (
@@ -149,17 +149,20 @@ export default function AuthUser() {
           </h1>
         </div>
       </div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Weak Password</DialogTitle>
-            <DialogDescription>
-              Gunakan minimal 8 karakter dengan angka & simbol.
-            </DialogDescription>
-          </DialogHeader>
-          <Button onClick={() => {setIsOpen(false);setPasswordStrong(PasswordStrong);}}>OK</Button>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Weak Password</AlertDialogTitle>
+            <AlertDialogDescription>
+            Use at least 8 characters with numbers & symbols.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setIsOpen(false); setPasswordStrong(!PasswordStrong); }}>NO</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setIsOpen(false); setPasswordStrong(PasswordStrong); }}>OK</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
