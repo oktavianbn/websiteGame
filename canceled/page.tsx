@@ -20,20 +20,20 @@ export default function AuthUser() {
   const [login, setLogin] = useState(true);
   const strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]$/;
 
-  const dataAddAndGet = () => {
-    if (login == true) {
-      // logika login
-    } else {
-      // logika sign up
-      try {
-        addDataUser(username, password);
-      } catch (error) {
-        console.error("Error adding document: ", error);
-        setUserName("");
-        setPassword("");
-      }
-    }
-  };
+  // const dataAddAndGet = () => {
+  //   if (login == true) {
+  //     // logika login
+  //   } else {
+  //     // logika sign up
+  //     try {
+  //       addDataUser(username, password);
+  //     } catch (error) {
+  //       console.error("Error adding document: ", error);
+  //       setUserName("");
+  //       setPassword("");
+  //     }
+  //   }
+  // };
 
   const uploadData = async (e: React.FormEvent) => {
     e.preventDefault();

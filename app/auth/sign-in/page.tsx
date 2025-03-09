@@ -86,7 +86,7 @@ export default function LogIn() {
         <div className="flex items-center justify-center w-full">
           <div className="w-full px-6 py-6 md:py-10 mx-5 mt-10 border-2 border-solid rounded-2xl border-charcoal flex flex-col gap-3">
             <h1 className="text-xl md:text-2xl font-semibold text-white dark:text-black flex justify-center">
-              Login
+              Sign In
             </h1>
 
             <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>

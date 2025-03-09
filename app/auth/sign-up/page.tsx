@@ -9,6 +9,8 @@ import lockWhite from "@/public/asset/svg/lock-white.svg"
 import { useRef, useState } from "react";
 import validator from "validator";
 import Link from "next/link";
+import { addDataUser } from "@/lib/database";
+import { findUser } from "@/lib/database";
 
 export default function SignUp() {
   // Refs untuk input dan pesan error
@@ -27,6 +29,9 @@ export default function SignUp() {
   const [usenameConfirmText, setUsenameConfirmText] = useState("");
   const [passwordConfirmText, setPasswordConfirmText] = useState("");
   const [emailConfirmText, setEmailConfirmText] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState(false);
 
   // Regex untuk validasi password (minimal 1 huruf besar, 1 huruf kecil, 1 angka, dan 1 simbol)
   const strongPassword =
@@ -39,16 +44,19 @@ export default function SignUp() {
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsenameConfirmText("Usename must be filled!")
-    } else if (!validUsename.test(username)) {
+      setEmailStatus(false);
+    } else if (validUsename.test(username)) {
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsenameConfirmText("Username cannot contain special characters!")
+      setEmailStatus(false);
     } else {
       inputUsername.current?.classList.add("border-gray-400");
       inputUsername.current?.classList.remove("border-red-600");
       h6Username.current?.classList.add("hidden");
-      setUsenameConfirmText("")
+      setUsenameConfirmText("");
+      setUsernameStatus(true);
     }
   };
 
@@ -58,16 +66,19 @@ export default function SignUp() {
       inputEmail.current?.classList.remove("border-gray-400");
       h6Email.current?.classList.remove("hidden");
       setEmailConfirmText("Email must be filled!");
+      setEmailStatus(false);
     } else if (!validator.isEmail(email)) {
       inputEmail.current?.classList.add("border-red-600");
       inputEmail.current?.classList.remove("border-gray-400");
       h6Email.current?.classList.remove("hidden");
       setEmailConfirmText("Your email is not valid!");
+      setEmailStatus(false);
     } else {
       inputEmail.current?.classList.add("border-gray-400");
       inputEmail.current?.classList.remove("border-red-600");
       h6Email.current?.classList.add("hidden");
       setEmailConfirmText("");
+      setEmailStatus(true);
     }
   };
 
@@ -78,12 +89,14 @@ export default function SignUp() {
       h6Password.current?.classList.remove("hidden");
       h6Password.current?.classList.remove("text-yellow-600");
       setPasswordConfirmText("Password must be filled!");
+      setEmailStatus(false);
     } else if (password.length < 8) {
       inputPassword.current?.classList.add("border-red-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
       h6Password.current?.classList.remove("hidden");
       h6Password.current?.classList.remove("text-yellow-600");
       setPasswordConfirmText("Password must have at least 8 characters!");
+      setEmailStatus(false);
     } else if (!strongPassword.test(password)) {
       inputPassword.current?.classList.add("border-yellow-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-red-600");
@@ -95,15 +108,56 @@ export default function SignUp() {
       inputPassword.current?.classList.remove("border-red-600", "border-yellow-600");
       h6Password.current?.classList.add("hidden");
       h6Password.current?.classList.remove("text-yellow-600");
+      setPasswordConfirmText("");
+      setPasswordStatus(true)
     }
   };
 
+  const userDataVerification = async () => {
+    try {
+      const userByUsername = await findUser("username", username);
+      if (userByUsername) {
+        console.log("Username sudah digunakan!");
+        // return; // Hentikan eksekusi jika username sudah ada
+      }
+
+      const userByEmail = await findUser("email", email);
+      if (userByEmail) {
+        console.log("Email sudah digunakan!");
+        // return; // Hentikan eksekusi jika email sudah ada
+      }
+    } catch (error) {
+      console.error("Error 3 ", error);
+    }
+  }
+
+  const manipulationAddDataUser = () => {
+    authUsn();
+    authEmail();
+    authPw()
+    userDataVerification()
+    if (usernameStatus == true && emailStatus == true && passwordStatus == true) {
+      try {
+        console.log("1");
+        addDataUser(username, email, password);
+        console.log("2");
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        setUserName("");
+        setEmail("");
+        setPassword("");
+        console.log("error 2");
+      }
+    } else {
+      console.log("error 1");
+    }
+  }
 
   return (
     <main className="font-poppins flex flex-col items-center justify-center w-full h-screen px-2 bg-gradient-to-l from-ebony via-ebony-clay to-ebony">
       <div className="flex flex-col gap-3">
-      <div className="flex max-md:flex-col text-4xl font-bold text-center md:gap-[0.5ch]">
-          <span className="text-white">Welcome to{""}</span><span className="text-blue-500">Play Portal</span>
+        <div className="flex max-md:flex-col text-4xl font-bold text-center md:gap-[0.5ch]">
+          <span className="text-white">Welcome to</span><span className="text-blue-500">Play Portal</span>
         </div>
         <h1 className="text-xl md:text-2xl text-center text-white">
           Your Gateway to Endless Fun!
@@ -195,7 +249,7 @@ export default function SignUp() {
                 <h6 ref={h6Password} className="hidden text-xs text-red-600">{passwordConfirmText}</h6>
               </div>
 
-              <button type="submit" className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black">
+              <button type="submit" className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black" onClick={manipulationAddDataUser}>
                 Create Account
               </button>
             </form>
@@ -203,7 +257,7 @@ export default function SignUp() {
             <div className="flex gap-1 text-xs text-white dark:text-black justify-center">
               <h1 className="text-xs">Already have an account?</h1>
               <Link href={"log-in"}>
-                <button className="text-blue-500 underline underline-offset-1">Login</button>
+                <button className="text-blue-500 underline underline-offset-1">Sign Up</button>
               </Link>
             </div>
           </div>
