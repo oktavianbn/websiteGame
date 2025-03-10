@@ -25,18 +25,20 @@ export default function SignUp() {
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [eyeOpen, setEyeOpen] = useState(true);
   const [usenameConfirmText, setUsenameConfirmText] = useState("");
   const [passwordConfirmText, setPasswordConfirmText] = useState("");
   const [emailConfirmText, setEmailConfirmText] = useState("");
+  const [eyeOpen, setEyeOpen] = useState(true);
   const [usernameStatus, setUsernameStatus] = useState(false);
   const [emailStatus, setEmailStatus] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState(false);
+  const [usernameAvailability, setUsernameAvailability] = useState(true);
+  const [emailAvailability, setEmailAvailability] = useState(true);
 
   // Regex untuk validasi password (minimal 1 huruf besar, 1 huruf kecil, 1 angka, dan 1 simbol)
   const strongPassword =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  const validUsename = /^(?=.*[@#$%^&*()!~/?+=|<>`";:{}()])$/
+  const validUsename = /^[a-zA-Z0-9_]+$/;
 
   const authUsn = () => {
     if (username.trim() === "") {
@@ -44,13 +46,19 @@ export default function SignUp() {
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsenameConfirmText("Usename must be filled!")
-      setEmailStatus(false);
-    } else if (validUsename.test(username)) {
+      setUsernameStatus(false);
+    } else if (!validUsename.test(username)) {
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsenameConfirmText("Username cannot contain special characters!")
-      setEmailStatus(false);
+      setUsernameStatus(false);
+    } else if (usernameAvailability == false) {
+      inputUsername.current?.classList.add("border-red-600");
+      inputUsername.current?.classList.remove("border-gray-400");
+      h6Username.current?.classList.remove("hidden");
+      setUsenameConfirmText("Your usename is already in use!")
+      setUsernameStatus(false);
     } else {
       inputUsername.current?.classList.add("border-gray-400");
       inputUsername.current?.classList.remove("border-red-600");
@@ -73,6 +81,12 @@ export default function SignUp() {
       h6Email.current?.classList.remove("hidden");
       setEmailConfirmText("Your email is not valid!");
       setEmailStatus(false);
+    } else if (emailAvailability == false) {
+      inputEmail.current?.classList.add("border-red-600");
+      inputEmail.current?.classList.remove("border-gray-400");
+      h6Email.current?.classList.remove("hidden");
+      setEmailConfirmText("Your email is already in use!");
+      setEmailStatus(false);
     } else {
       inputEmail.current?.classList.add("border-gray-400");
       inputEmail.current?.classList.remove("border-red-600");
@@ -89,20 +103,21 @@ export default function SignUp() {
       h6Password.current?.classList.remove("hidden");
       h6Password.current?.classList.remove("text-yellow-600");
       setPasswordConfirmText("Password must be filled!");
-      setEmailStatus(false);
+      setPasswordStatus(false);
     } else if (password.length < 8) {
       inputPassword.current?.classList.add("border-red-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
       h6Password.current?.classList.remove("hidden");
       h6Password.current?.classList.remove("text-yellow-600");
       setPasswordConfirmText("Password must have at least 8 characters!");
-      setEmailStatus(false);
+      setPasswordStatus(false);
     } else if (!strongPassword.test(password)) {
       inputPassword.current?.classList.add("border-yellow-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-red-600");
       h6Password.current?.classList.remove("hidden");
       h6Password.current?.classList.add("text-yellow-600");
       setPasswordConfirmText("Your password is not strong!");
+      setPasswordStatus(true)
     } else {
       inputPassword.current?.classList.add("border-gray-400");
       inputPassword.current?.classList.remove("border-red-600", "border-yellow-600");
@@ -116,37 +131,29 @@ export default function SignUp() {
   const userDataVerification = async () => {
     try {
       const userByUsername = await findUser("username", username);
-      if (userByUsername) {
-        console.log("Username sudah digunakan!");
-        // return; // Hentikan eksekusi jika username sudah ada
-      }
+      setUsernameAvailability(!userByUsername);
 
       const userByEmail = await findUser("email", email);
-      if (userByEmail) {
-        console.log("Email sudah digunakan!");
-        // return; // Hentikan eksekusi jika email sudah ada
-      }
+      setEmailAvailability(!userByEmail);
     } catch (error) {
       console.error("Error 3 ", error);
     }
-  }
+  };
 
-  const manipulationAddDataUser = () => {
+
+  const manipulationAddDataUser = async () => {
     authUsn();
     authEmail();
     authPw()
-    userDataVerification()
+    await userDataVerification()
     if (usernameStatus == true && emailStatus == true && passwordStatus == true) {
       try {
-        console.log("1");
-        addDataUser(username, email, password);
-        console.log("2");
+        await addDataUser(username, email, password);
       } catch (error) {
         console.error("Error adding document: ", error);
         setUserName("");
         setEmail("");
         setPassword("");
-        console.log("error 2");
       }
     } else {
       console.log("error 1");
@@ -154,8 +161,8 @@ export default function SignUp() {
   }
 
   return (
-    <main className="font-poppins flex flex-col items-center justify-center w-full h-screen px-2 bg-gradient-to-l from-ebony via-ebony-clay to-ebony">
-      <div className="flex flex-col gap-3">
+    <main className="font-poppins flex flex-col items-center justify-center w-full h-screen px-2 bg-gradient-to-l from-ebony via-ebony-clay to-ebony overflow-visible">
+      <div className="flex flex-col justify-between h-max">
         <div className="flex max-md:flex-col text-4xl font-bold text-center md:gap-[0.5ch]">
           <span className="text-white">Welcome to</span><span className="text-blue-500">Play Portal</span>
         </div>
@@ -164,7 +171,7 @@ export default function SignUp() {
         </h1>
 
         <div className="flex items-center justify-center w-full">
-          <div className="w-full px-6 py-6 md:py-10 mx-5 mt-10 border-2 border-solid rounded-2xl border-charcoal flex flex-col gap-3">
+          <div className="w-full px-6 py-6 md:py-8 mx-5 mt-10 border-2 border-solid rounded-2xl border-charcoal flex flex-col gap-3">
             <h1 className="text-xl md:text-2xl font-semibold text-white dark:text-black flex justify-center">
               Sign Up
             </h1>
@@ -248,16 +255,20 @@ export default function SignUp() {
                 </div>
                 <h6 ref={h6Password} className="hidden text-xs text-red-600">{passwordConfirmText}</h6>
               </div>
-
-              <button type="submit" className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black" onClick={manipulationAddDataUser}>
+              <button
+                type="submit"
+                className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={manipulationAddDataUser}
+                // disabled={!usernameStatus || !emailStatus || !passwordStatus}
+              >
                 Create Account
               </button>
             </form>
 
             <div className="flex gap-1 text-xs text-white dark:text-black justify-center">
               <h1 className="text-xs">Already have an account?</h1>
-              <Link href={"log-in"}>
-                <button className="text-blue-500 underline underline-offset-1">Sign Up</button>
+              <Link href={"sign-in"}>
+                <button className="text-blue-500 underline underline-offset-1">Sign In</button>
               </Link>
             </div>
           </div>

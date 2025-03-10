@@ -74,7 +74,7 @@ export default function LogIn() {
   };
 
   return (
-    <main className="font-poppins flex flex-col items-center justify-center px-2 w-full h-screen bg-gradient-to-l from-ebony via-ebony-clay to-ebony">
+    <main className="font-poppins flex flex-col items-center justify-center px-2 w-full h-screen bg-gradient-to-l from-ebony via-ebony-clay to-ebony overflow-visible">
       <div className="flex flex-col gap-3">
         <div className="flex max-md:flex-col text-4xl font-bold text-center md:gap-[0.5ch]">
           <span className="text-white">Welcome to</span><span className="text-blue-500">Play Portal</span>
