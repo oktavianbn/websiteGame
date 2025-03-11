@@ -136,16 +136,17 @@ export default function SignUp() {
       const userByEmail = await findUser("email", email);
       setEmailAvailability(!userByEmail);
     } catch (error) {
-      console.error("Error 3 ", error);
+      console.log("Error 3 ", error);
     }
   };
 
 
   const manipulationAddDataUser = async () => {
+    await userDataVerification();
     authUsn();
     authEmail();
-    authPw()
-    await userDataVerification()
+    authPw();
+    // await manipulationAddDataUser();
     if (usernameStatus == true && emailStatus == true && passwordStatus == true) {
       try {
         await addDataUser(username, email, password);
@@ -258,8 +259,14 @@ export default function SignUp() {
               <button
                 type="submit"
                 className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={manipulationAddDataUser}
-                // disabled={!usernameStatus || !emailStatus || !passwordStatus}
+                onClick={async () => {
+                  await userDataVerification();
+                  authUsn();
+                  authEmail();
+                  authPw();
+                  await manipulationAddDataUser();
+                }}
+              // disabled={!usernameStatus || !emailStatus || !passwordStatus}
               >
                 Create Account
               </button>

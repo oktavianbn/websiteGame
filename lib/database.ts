@@ -16,7 +16,7 @@ export async function addDataUser(username: string, email: string, password: str
 
     console.log("User berhasil ditambahkan ke database!");
   } catch (error) {
-    console.error("Gagal membuat user:", error);
+    console.log("Gagal membuat user:", error);
   }
 }
 
