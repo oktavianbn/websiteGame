@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import Image from "next/image";
@@ -22,10 +23,10 @@ export default function SignUp() {
   const h6Password = useRef<HTMLHeadingElement>(null);
 
   // State untuk menyimpan nilai input
-  const [username, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [usenameConfirmText, setUsenameConfirmText] = useState("");
+  const [usernameConfirmText, setUsernameConfirmText] = useState("");
   const [passwordConfirmText, setPasswordConfirmText] = useState("");
   const [emailConfirmText, setEmailConfirmText] = useState("");
   const [eyeOpen, setEyeOpen] = useState(true);
@@ -38,32 +39,32 @@ export default function SignUp() {
   // Regex untuk validasi password (minimal 1 huruf besar, 1 huruf kecil, 1 angka, dan 1 simbol)
   const strongPassword =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  const validUsename = /^[a-zA-Z0-9_]+$/;
+  const validUsername = /^[a-zA-Z0-9_]+$/;
 
   const authUsn = () => {
     if (username.trim() === "") {
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
-      setUsenameConfirmText("Usename must be filled!")
+      setUsernameConfirmText("Username must be filled!")
       setUsernameStatus(false);
-    } else if (!validUsename.test(username)) {
+    } else if (!validUsername.test(username)) {
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
-      setUsenameConfirmText("Username cannot contain special characters!")
+      setUsernameConfirmText("Username cannot contain special characters!")
       setUsernameStatus(false);
-    } else if (usernameAvailability == false) {
+    } else if (usernameAvailability === false) {
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
-      setUsenameConfirmText("Your usename is already in use!")
+      setUsernameConfirmText("Your username is already in use!")
       setUsernameStatus(false);
     } else {
       inputUsername.current?.classList.add("border-gray-400");
       inputUsername.current?.classList.remove("border-red-600");
       h6Username.current?.classList.add("hidden");
-      setUsenameConfirmText("");
+      setUsernameConfirmText("");
       setUsernameStatus(true);
     }
   };
@@ -81,7 +82,7 @@ export default function SignUp() {
       h6Email.current?.classList.remove("hidden");
       setEmailConfirmText("Your email is not valid!");
       setEmailStatus(false);
-    } else if (emailAvailability == false) {
+    } else if (emailAvailability === false) {
       inputEmail.current?.classList.add("border-red-600");
       inputEmail.current?.classList.remove("border-gray-400");
       h6Email.current?.classList.remove("hidden");
@@ -142,24 +143,32 @@ export default function SignUp() {
 
 
   const manipulationAddDataUser = async () => {
-    await userDataVerification();
-    authUsn();
-    authEmail();
-    authPw();
-    // await manipulationAddDataUser();
-    if (usernameStatus == true && emailStatus == true && passwordStatus == true) {
-      try {
-        await addDataUser(username, email, password);
-      } catch (error) {
-        console.error("Error adding document: ", error);
-        setUserName("");
-        setEmail("");
-        setPassword("");
-      }
-    } else {
-      console.log("error 1");
+    try {
+      // Jalankan semua validasi secara bersamaan
+      const [userByUsername, userByEmail] = await Promise.all([
+        findUser("username", username),
+        findUser("email", email)
+      ]);
+      
+      // Update state
+      const usernameAvailable = !userByUsername;
+      const emailAvailable = !userByEmail;
+      
+      setUsernameAvailability(usernameAvailable);
+      setEmailAvailability(emailAvailable);
+      
+      // Validasi dengan nilai yang sudah pasti
+      let isValid = true;
+      
+      //  validation
+      authUsn()
+      authPw()
+      authEmail()
+
+    } catch (error) {
+      console.error("Error: ", error);
     }
-  }
+  };
 
   return (
     <main className="font-poppins flex flex-col items-center justify-center w-full h-screen px-2 bg-gradient-to-l from-ebony via-ebony-clay to-ebony overflow-visible">
@@ -195,11 +204,11 @@ export default function SignUp() {
                     value={username}
                     onBlur={authUsn}
                     autoComplete="username"
-                    onChange={(e) => setUserName(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="w-full py-2 pl-1 rounded-r-md ml-3 text-xs md:text-sm text-light-silver bg-transparent placeholder:text-gray-400 outline-none dark:text-black"
                   />
                 </div>
-                <h6 ref={h6Username} className="hidden text-xs text-red-600">{usenameConfirmText}</h6>
+                <h6 ref={h6Username} className="hidden text-xs text-red-600">{usernameConfirmText}</h6>
               </div>
 
               {/* Email Field */}
@@ -259,14 +268,7 @@ export default function SignUp() {
               <button
                 type="submit"
                 className="w-full py-2 mt-3 text-xs md:text-sm text-white bg-blue-500 rounded-lg dark:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={async () => {
-                  await userDataVerification();
-                  authUsn();
-                  authEmail();
-                  authPw();
-                  await manipulationAddDataUser();
-                }}
-              // disabled={!usernameStatus || !emailStatus || !passwordStatus}
+                onClick={manipulationAddDataUser}
               >
                 Create Account
               </button>

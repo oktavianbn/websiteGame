@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from "./firebase";
 import { ref, set, push, onValue, get, child } from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
