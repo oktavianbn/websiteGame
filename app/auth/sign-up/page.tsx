@@ -142,32 +142,32 @@ export default function SignUp() {
   };
 
 
-  const manipulationAddDataUser = async () => {
-    try {
-      // Jalankan semua validasi secara bersamaan
-      const [userByUsername, userByEmail] = await Promise.all([
-        findUser("username", username),
-        findUser("email", email)
-      ]);
+  const manipulationAddDataUser = () => {
+    const findData= async ()=>{
       
-      // Update state
-      const usernameAvailable = !userByUsername;
-      const emailAvailable = !userByEmail;
-      
-      setUsernameAvailability(usernameAvailable);
-      setEmailAvailability(emailAvailable);
-      
-      // Validasi dengan nilai yang sudah pasti
-      let isValid = true;
-      
+      try {
+        // Jalankan semua validasi secara bersamaan
+        const [userByUsername, userByEmail] = await Promise.all([
+          findUser("username", username),
+          findUser("email", email)
+        ]);
+        
+        // Update state
+        const usernameAvailable = !userByUsername;
+        const emailAvailable = !userByEmail;
+        
+        setUsernameAvailability(usernameAvailable);
+        setEmailAvailability(emailAvailable);
+        
+            } catch (error) {
+              console.error("Error: ", error);
+            }
+    }
       //  validation
+      findData()
       authUsn()
       authPw()
       authEmail()
-
-    } catch (error) {
-      console.error("Error: ", error);
-    }
   };
 
   return (
