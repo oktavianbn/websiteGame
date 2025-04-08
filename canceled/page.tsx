@@ -1,168 +1,107 @@
-"use client";
+import Image from "next/image";
+import Link from "next/link";
 
-import { useRef, useState } from "react";
-import { addDataUser } from "../lib/database";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel, } from "@/components/ui/alert-dialog";
-import { Dialog, DialogPortal, DialogOverlay, DialogTrigger, DialogClose, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
-export default function AuthUser() {
-  const inputUsername = useRef<HTMLInputElement>(null);
-  const inputPassword = useRef<HTMLInputElement>(null);
-  const h6Username = useRef<HTMLHeadingElement>(null);
-  const h6Password = useRef<HTMLHeadingElement>(null);
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [PasswordConfirmText, setPasswordConfirmText] = useState("");
-  const [PasswordStrong, setPasswordStrong] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-  const [login, setLogin] = useState(true);
-  const strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]$/;
 
-  // const dataAddAndGet = () => {
-  //   if (login == true) {
-  //     // logika login
-  //   } else {
-  //     // logika sign up
-  //     try {
-  //       addDataUser(username, password);
-  //     } catch (error) {
-  //       console.error("Error adding document: ", error);
-  //       setUserName("");
-  //       setPassword("");
-  //     }
-  //   }
-  // };
-
-  const uploadData = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username.trim() === "") {
-      inputUsername.current?.classList.add("border-red-600");
-      inputUsername.current?.classList.remove("border-gray-400");
-      h6Username.current?.classList.remove("hidden");
-    } else {
-      inputUsername.current?.classList.add("border-gray-400");
-      inputUsername.current?.classList.remove("border-red-600");
-      h6Username.current?.classList.add("hidden");
-    }
-    if (password.trim() === "") {
-      inputPassword.current?.classList.add("border-red-600");
-      inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
-      h6Password.current?.classList.remove("hidden");
-      h6Password.current?.classList.remove("text-yellow-600");
-      setPasswordConfirmText("Password must be filled!");
-    } else if (password.length < 8) {
-      inputPassword.current?.classList.add("border-red-600");
-      inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
-      h6Password.current?.classList.remove("hidden");
-      h6Password.current?.classList.remove("text-yellow-600");
-      setPasswordConfirmText("Password must have 8 characters!");
-    } else if (!strong.test(password)) {
-      inputPassword.current?.classList.add("border-yellow-600");
-      inputPassword.current?.classList.remove("border-gray-400", "border-red-600");
-      h6Password.current?.classList.remove("hidden");
-      h6Password.current?.classList.add("text-yellow-600");
-      setPasswordConfirmText("Your password not strong!");
-      setPasswordStrong(!PasswordStrong);
-      setIsOpen(true);
-    } else {
-      inputPassword.current?.classList.add("border-gray-400");
-      inputPassword.current?.classList.remove("border-red-600", "border-yellow-600");
-      h6Password.current?.classList.add("hidden");
-      h6Password.current?.classList.remove("text-yellow-600");
-    }
-  }
-  if (PasswordStrong == true) {
-    // dataAddAndGet();
-  } else {
-  }
-
+export default function Home() {
   return (
-    <div className="bg-black h-screen w-full flex justify-center items-center">
-      <div className="container mx-auto border-solid border-white border-2 rounded-2xl w-max flex flex-col gap-3 p-4">
-        <div className="logo "></div>
-        <h1 className="title font-semibold text-2xl text-white dark:text-black  flex justify-center">
-          {login ? "Login" : "Sign Up"}
-        </h1>
-        <form className="container flex flex-col gap-3" action="" method="post">
-          <div className="username flex flex-col items-start w-full gap-1">
-            <label
-              htmlFor="username"
-              className="font-medium md:text-sm text-xs dark:text-black text-white"
-            >
-              Name :
-            </label>
-            <input
-              ref={inputUsername}
-              type="text"
-              placeholder="Input your name"
-              name="username"
-              id="username"
-              value={username}
-              onChange={(e) => setUserName(e.target.value)}
-              className="w-full text-white dark:text-black bg-transparent md:text-sm text-xs p-2 px-3 rounded-md outline-none border placeholder:text-gray-400 duration-200 transition-all border-gray-400 focus:border-blue-500"
-            />
-            <h6 ref={h6Username} className="hidden text-red-600 text-xs">
-              Username must be filled!
-            </h6>
-          </div>
-          <div className="password flex flex-col items-start w-full gap-1">
-            <label
-              htmlFor="password"
-              className="font-medium md:text-sm text-xs dark:text-black text-white"
-            >
-              Password :
-            </label>
-            <input
-              ref={inputPassword}
-              type="password"
-              placeholder="Input your password"
-              name="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-white dark:text-black bg-transparent md:text-sm text-xs p-2 px-3 rounded-md outline-none border placeholder:text-gray-400 duration-200 transition-all border-gray-400 focus:border-blue-500"
-            />
-            <h6 ref={h6Password} className="hidden text-red-600 text-xs">
-              {PasswordConfirmText}
-            </h6>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-white dark:bg-black text-black  md:text-sm text-xs py-2 rounded-lg mt-3"
-            onClick={uploadData}
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
+        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">
+            Get started by editing{" "}
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              app/page.tsx
+            </code>
+            .
+          </li>
+          <li>Save and see your changes instantly.</li>
+        </ol>
+
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            {login ? "Login" : "Create Account"}
-          </button>
-        </form>
-        <div className="justify-center text-white dark:text-black text-xs flex gap-1">
-          <h1 className="text-xs">
-            {login
-              ? "Don't have an account yet? " : "Already have an account? "}
-            <button
-              className="underline underline-offset-1 text-blue-500"
-              onClick={() => setLogin(!login)}
-            >
-              {login ? "Sign Up" : "Login"}
-            </button>
-          </h1>
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
         </div>
-      </div>
-      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Weak Password</AlertDialogTitle>
-            <AlertDialogDescription>
-            Use at least 8 characters with numbers & symbols.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => { setIsOpen(false); setPasswordStrong(!PasswordStrong); }}>NO</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { setIsOpen(false); setPasswordStrong(PasswordStrong); }}>OK</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      </main>
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
+    <Link href={"auth/sign-in"}>
+    go to
+    </Link>
     </div>
   );
 }

@@ -1,81 +1,76 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from "./firebase";
-import { ref, set, push, onValue, get, child } from "firebase/database";
+import { ref, set, push, onValue, get, child, serverTimestamp, orderByChild, equalTo, query } from "firebase/database";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 // Fungsi untuk Menulis Data (Menambahkan User)
-export async function addDataUser(username: string, email: string, password: string): Promise<void> {
+/*export async function addNewDataUser(username: string, email: string, password: string) {
   try {
-    // Buat akun dengan email & password di Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Simpan username & email ke Realtime Database
-    const userRef = ref(db, `users/${user.uid}`);
-    await set(userRef, { username, email });
+    const userRef = push(ref(db, '/users'));
 
-    console.log("User berhasil ditambahkan ke database!");
+    await set(userRef, {
+      uid: user.uid,
+      username: username,
+      email: email,
+      createAt: serverTimestamp()
+    });
+    return { success: true, uid: user.uid };
   } catch (error) {
-    console.log("Gagal membuat user:", error);
+    if (error instanceof Error) {
+      alert(`Error 001 BE: ${error.message}`);
+    } else {
+      alert('An unknown error occurred BE');
+    }
   }
+}*/
+
+export const addNewDataUser = async (username: string, email: string, password: string) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+
+  await setDoc(doc(db, 'user', user.uid), {
+    uid: user.uid,
+    username: username,
+    email: email,
+    createAt: serverTimestamp()
+  });
 }
 
-export async function getAllUsers() {
-  const dbRef = ref(db);
+// Fungsi untuk Mencari User Bedasarkan Email&/Username 
+/*export async function findUser(key: "email" | "username", value: string) {
+  if (key)
+    try {
+      const usersRef = ref(db, 'users');
+      const queryRef = query(usersRef, orderByChild(key), equalTo(value));
 
-  try {
-    const snapshot = await get(child(dbRef, "users"));
+      const snapshot = await get(queryRef);
 
-    if (snapshot.exists()) {
-      const users = snapshot.val();
-      const userList = [];
+      if (snapshot.exists()) {
+        const users = snapshot.val();
+        const userId = Object.keys(users)[0];
 
-      // Loop melalui semua user untuk mengambil username dan email
-      for (const key in users) {
-        userList.push({
-          username: users[key].username,
-          email: users[key].email,
-        });
+        return {
+          found: true,
+          userData: users[userId]
+        };
       }
 
-      console.log("Data semua user:", userList);
-      return userList; // Mengembalikan daftar user
-    } else {
-      console.log("Database user masih kosong.");
-      return [];
-    }
-  } catch (error) {
-    console.error("Error saat mengambil data user:", error);
-    return [];
-  }
-}
-
-export async function findUser(key: "email" | "username", value: string): Promise<any | null> {
-  const dbRef = ref(db);
-
-  try {
-    const snapshot = await get(child(dbRef, "users"));
-
-    if (snapshot.exists()) {
-      const users = snapshot.val();
-
-      for (const userId in users) {
-        if (users[userId][key] === value) {
-          console.log(`User dengan ${key} "${value}" ditemukan.`);
-          return users[userId];
-        }
+      return {
+        found: false,
+        userData: null
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(`Error 002 BE: ${error.message}`);
+      } else {
+        alert('An unknown error occurred BE');
       }
+    }*/
 
-      console.log(`User dengan ${key} "${value}" tidak ditemukan.`);
-      return null;
-    } else {
-      console.log("Database user masih kosong.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error saat mencari user:", error);
-    return null;
-  }
-}

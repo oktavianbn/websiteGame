@@ -65,7 +65,8 @@ export default {
 			fontFamily: {
 				poppins: ['Poppins', 'sans-serif'],
 			},
-		}
+		},
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
