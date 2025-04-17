@@ -11,7 +11,6 @@ import { useEffect, useRef, useState } from "react";
 import validator from "validator";
 import Link from "next/link";
 import { addNewDataUser } from "@/lib/database";
-import { findUser } from "@/lib/database";
 import { useRouter } from "next/navigation";
 
 export default function SignUp() {
@@ -151,21 +150,21 @@ export default function SignUp() {
     }
   };
 
-  const userDataVerification = async () => {
-    try {
-      const [usernameCheck, emailCheck] = await Promise.all([
-        findUser("username", username),
-        findUser("email", email),
-      ]);
+  // const userDataVerification = async () => {
+  //   try {
+  //     const [usernameCheck, emailCheck] = await Promise.all([
+  //       findUser("username", username),
+  //       findUser("email", email),
+  //     ]);
 
-      console.log(!usernameCheck?.found, "1");
-      console.log(!emailCheck?.found, "2");
-      setIsUsernameAvailable(!usernameCheck?.found);
-      setIsEmailAvailable(!emailCheck?.found);
-    } catch (error) {
-      console.log("Verification error FE:", error);
-    }
-  };
+  //     console.log(!usernameCheck?.found, "1");
+  //     console.log(!emailCheck?.found, "2");
+  //     setIsUsernameAvailable(!usernameCheck?.found);
+  //     setIsEmailAvailable(!emailCheck?.found);
+  //   } catch (error) {
+  //     console.log("Verification error FE:", error);
+  //   }
+  // };
 
   const manipulationAddDataUser = async () => {
     setIsLoading(true);
@@ -174,7 +173,7 @@ export default function SignUp() {
     authEmail();
     authPw();
 
-    await userDataVerification();
+    // await userDataVerification();
 
     setHasCheckedAvailability(true);
 

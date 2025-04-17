@@ -8,7 +8,6 @@ import personWhite from "@/public/asset/svg/person-white.svg"
 import lockWhite from "@/public/asset/svg/lock-white.svg"
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { findUser } from "@/lib/database";
 import validator from "validator";
 import router from "next/router";
 
@@ -95,43 +94,43 @@ export default function LogIn() {
     }
   };
 
-  const userDataVerification = async () => {
-    try {
-      if (validator.isEmail(usernameOrEmail)) {
-        const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
-          findUser("username", usernameOrEmail),
-          // findUser("password", password),
-        ]);
-        console.log(!UsernameOrEmailCheck?.found, "1");
-        console.log(!passwordChek?.found, "2");
-        setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
-        setIsPasswordAvailable(!passwordChek?.found);
-      } else {
-        const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
-          findUser("email", usernameOrEmail),
-          // findUser("password", password),
-        ]);
-        console.log(!UsernameOrEmailCheck?.found, "1");
-        console.log(!passwordChek?.found, "2");
-        setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
-        setIsPasswordAvailable(!passwordChek?.found);
-      }
+  // const userDataVerification = async () => {
+  //   try {
+  //     if (validator.isEmail(usernameOrEmail)) {
+  //       const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
+  //         findUser("username", usernameOrEmail),
+  //         // findUser("password", password),
+  //       ]);
+  //       console.log(!UsernameOrEmailCheck?.found, "1");
+  //       console.log(!passwordChek?.found, "2");
+  //       setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
+  //       setIsPasswordAvailable(!passwordChek?.found);
+  //     } else {
+  //       const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
+  //         findUser("email", usernameOrEmail),
+  //         // findUser("password", password),
+  //       ]);
+  //       console.log(!UsernameOrEmailCheck?.found, "1");
+  //       console.log(!passwordChek?.found, "2");
+  //       setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
+  //       setIsPasswordAvailable(!passwordChek?.found);
+  //     }
 
-    } catch (error) {
-      console.log("Verification error FE:", error);
-    }
-  };
+  //   } catch (error) {
+  //     console.log("Verification error FE:", error);
+  //   }
+  // };
 
-  const findDataUser = async () => {
-    setIsLoading(true);
-    await userDataVerification();
-    if (isPasswordAvailable===true && isUsernameOrEmailAvailable===true) {
-      router.replace("/landing/game");
-    } else {
-      return;
-    }
-    setIsLoading(false);
-  }
+  // const findDataUser = async () => {
+  //   setIsLoading(true);
+  //   await userDataVerification();
+  //   if (isPasswordAvailable===true && isUsernameOrEmailAvailable===true) {
+  //     router.replace("/landing/game");
+  //   } else {
+  //     return;
+  //   }
+  //   setIsLoading(false);
+  // }
 
   return (
 

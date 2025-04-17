@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from "./firebase";
-import { ref, set, push, onValue, get, child, serverTimestamp, orderByChild, equalTo, query } from "firebase/database";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
 import { auth } from "./firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { fetchSignInMethodsForEmail } from "firebase/auth";
+import { getFirestore, collection, query, where, getDocs, serverTimestamp, doc, setDoc } from "firebase/firestore";
 
 // Fungsi untuk Menulis Data (Menambahkan User)
 /*export async function addNewDataUser(username: string, email: string, password: string) {
@@ -31,17 +29,59 @@ import { fetchSignInMethodsForEmail } from "firebase/auth";
   }
 }*/
 
-export const addNewDataUser = async (username: string, email: string, password: string) => {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
+const checkUsername = async (username: string) => {
+  const q = query(collection(db, "user"), where("username", "==", username));
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty;
+};
 
-  await setDoc(doc(db, 'user', user.uid), {
-    uid: user.uid,
-    username: username,
-    email: email,
-    createAt: serverTimestamp()
-  });
-}
+const checkEmail = async (email: string) => {
+  const q = query(collection(db, "user"), where("email", "==", email));
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty; 
+};
+
+export const addNewDataUser = async (username: string, email: string, password: string) => {
+  try {
+    const [isUsernameUsed, isEmailUsed] = await Promise.all([
+      checkUsername(username),
+      checkEmail(email)
+    ]);
+
+    if (isUsernameUsed) {
+      console.log("Username sudah dipakai!");
+      return { find: false, error: "username-exists" };
+    }
+
+    if (isEmailUsed) {
+      console.log("Email sudah dipakai (di firestore)!");
+      return { find: false, error: "email-exists" };
+    }
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    console.log(" User created:", user.email);
+
+    await setDoc(doc(db, "user", user.uid), {
+      uid: user.uid,
+      username: username,
+      email: email,
+      createdAt: serverTimestamp()
+    });
+
+    return { find: true };
+
+  } catch (error: any) {
+    if (error.code === "auth/email-already-in-use") {
+      console.log("Email sudah dipakai (di auth)!");
+      return { find: false, error: "email-auth-exists" };
+    }
+
+    console.log("🔥 Error saat membuat akun:", error.message);
+    return { find: false, error: "unknown-error" };
+  }
+};
 
 // Fungsi untuk Mencari User Bedasarkan Email&/Username 
 /*export async function findUser(key: "email" | "username", value: string) {

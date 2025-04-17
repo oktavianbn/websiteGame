@@ -48,7 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className={`min-h-screen ${mode === 'Dark' ? 'bg-black text-white' : mode === 'Light' ? 'bg-white text-black' : 'bg-neutral-900 text-white'}`}>
-            <nav className="bg-[#0a0c10] px-6 py-3 flex justify-between items-center border-b border-gray-800">
+            <nav className="bg-[#0a0c10] px-6 py-3 flex justify-between items-center border-b border-gray-800 fixed w-full">
                 <div className=" md:hidden flex bg-[#0a0c10] text-white">
                     {/* Mobile toggle */}
                     <button
@@ -61,7 +61,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     {/* Sidebar */}
                     <aside
                         ref={sidebarRef}
-                        className={`absolute top-0 left-0 h-full w-64 bg-[#0a0c10] border-r border-gray-800 p-6 space-y-6 transform transition-transform duration-300 ease-in-out z-50
+                        className={`fixed top-0 left-0 h-full w-64 bg-[#0a0c10] border-r border-gray-800 p-6 space-y-6 transform transition-transform duration-300 ease-in-out z-50
                             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static`}
                     >
                         <button
