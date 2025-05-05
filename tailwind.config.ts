@@ -15,6 +15,7 @@ export default {
 				'light-silver': '#D1D5DB',
 				'charcoal': '#374151',
 				'independence': '#4B5563',
+				'eerie-black':'#171A21',
 
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',

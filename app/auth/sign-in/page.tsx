@@ -10,6 +10,8 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import validator from "validator";
 import router from "next/router";
+import { checkUser, findUser } from "@/lib/database";
+
 
 export default function LogIn() {
   // Refs untuk input dan pesan error
@@ -32,6 +34,9 @@ export default function LogIn() {
   
   const [isUsernameOrEmailValid, setIsUsernameOrEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(true);
+  const [isEmailAvailable, setIsEmailAvailable] = useState(true);
   
   const [isLoading, setIsLoading] = useState(false);
   const [hasCheckedAvailability, setHasCheckedAvailability] = useState(false);
@@ -94,43 +99,20 @@ export default function LogIn() {
     }
   };
 
-  // const userDataVerification = async () => {
-  //   try {
-  //     if (validator.isEmail(usernameOrEmail)) {
-  //       const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
-  //         findUser("username", usernameOrEmail),
-  //         // findUser("password", password),
-  //       ]);
-  //       console.log(!UsernameOrEmailCheck?.found, "1");
-  //       console.log(!passwordChek?.found, "2");
-  //       setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
-  //       setIsPasswordAvailable(!passwordChek?.found);
-  //     } else {
-  //       const [UsernameOrEmailCheck, passwordChek] = await Promise.all([
-  //         findUser("email", usernameOrEmail),
-  //         // findUser("password", password),
-  //       ]);
-  //       console.log(!UsernameOrEmailCheck?.found, "1");
-  //       console.log(!passwordChek?.found, "2");
-  //       setIsUsernameOrEmailAvailable(!UsernameOrEmailCheck?.found);
-  //       setIsPasswordAvailable(!passwordChek?.found);
-  //     }
+  const findDataUser = async () => {
+    try {
+      let email: string|null=null;
+      let usn: string|null=null;
+      if (validator.isEmail(usernameOrEmail)) {
+        email=usernameOrEmail;
+      } else {
+        usn=usernameOrEmail;
+      }
 
-  //   } catch (error) {
-  //     console.log("Verification error FE:", error);
-  //   }
-  // };
-
-  // const findDataUser = async () => {
-  //   setIsLoading(true);
-  //   await userDataVerification();
-  //   if (isPasswordAvailable===true && isUsernameOrEmailAvailable===true) {
-  //     router.replace("/landing/game");
-  //   } else {
-  //     return;
-  //   }
-  //   setIsLoading(false);
-  // }
+    } catch (error) {
+      console.log("Verification error FE:", error);
+    }
+  };
 
   return (
 

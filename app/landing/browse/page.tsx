@@ -3,20 +3,21 @@ import GameGrid from "@/components/element/game-grid";
 import { games } from "@/lib/game";
 import { Search } from "lucide-react";
 
+
 export default function Games() {
 
     return (
-        <main>
-
-            <div className="min-h-screen bg-gradient-to-b from-[#0f172a] to-[#1e293b] flex flex-col items-center justify-center text-white px-4 text-center">
+        <>
+            <div className="bg-[url('/asset/image/background1.png')] bg-cover bg-center min-h-screen  flex flex-col items-center justify-center text-white px-4 text-center">
                 <h1 className="text-3xl md:text-5xl font-bold mb-4">
-                    Discover Your Next Gaming Adventure
+                    Discover Your Next Gaming 
                 </h1>
-                <p className="text-sm md:text-base text-slate-300 mb-6">
+                <h1 className="text-3xl md:text-5xl font-bold mb-4">Adventure</h1>
+                <h2 className="text-sm md:text-base text-slate-300 mb-6">
                     Your portal to endless gaming possibilities
-                </p>
+                </h2>
 
-                <div className="flex w-full max-w-md items-center bg-slate-800 rounded-md px-4 py-2 mb-4 focus-within:ring-2 focus-within:ring-cyan-500">
+                <div className="flex w-full max-w-md items-center rounded-md px-4 py-2 mb-4 focus-within:ring-2 focus-within:ring-cyan-500">
                     <input
                         type="text"
                         placeholder="Search games, genres, or publishers..."
@@ -29,7 +30,6 @@ export default function Games() {
                     Browse All Games
                 </button>
             </div>
-            import GameGrid from "@/components/GameGrid"
 
             <div className="w-full overflow-x-auto">
                 <div className="flex gap-6 py-4 px-2">
@@ -40,9 +40,6 @@ export default function Games() {
                     ))}
                 </div>
             </div>
-
-
-        </main>
+        </>
     )
-
 }

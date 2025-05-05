@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+'use client';
 
 import Image from "next/image";
 import eyeWhite from "@/public/asset/svg/eye-white.svg";
@@ -10,8 +10,9 @@ import lockWhite from "@/public/asset/svg/lock-white.svg";
 import { useEffect, useRef, useState } from "react";
 import validator from "validator";
 import Link from "next/link";
-import { addNewDataUser } from "@/lib/database";
-import { useRouter } from "next/navigation";
+import { addNewDataUser, checkUser } from "@/lib/database";
+import { useRouter } from 'next/navigation';
+
 
 export default function SignUp() {
   // Refs untuk input dan pesan error
@@ -43,37 +44,29 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasCheckedAvailability, setHasCheckedAvailability] = useState(false);
 
-
-  const router = useRouter();
-
-  const strongPassword =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_+])[A-Za-z\d@$!%*?&]{8,}$/;
+  const router=useRouter();
+  const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_+])[A-Za-z\d@$!%*?&]{8,}$/;
   const validUsername = /^[a-zA-Z0-9_]+$/;
   const authUsn = () => {
-    console.log("Running authUsn...FE");
     if (username.trim() === "") {
-      console.log("Username kosong.FE");
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsernameMessage("Username must be filled!");
       setIsUsernameValid(false);
     } else if (!validUsername.test(username)) {
-      console.log("Username mengandung karakter khusus.FE");
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsernameMessage("Username cannot contain special characters!");
       setIsUsernameValid(false);
     } else if (isUsernameAvailable === false) {
-      console.log("Username sudah digunakan.FE");
       inputUsername.current?.classList.add("border-red-600");
       inputUsername.current?.classList.remove("border-gray-400");
       h6Username.current?.classList.remove("hidden");
       setUsernameMessage("Your username is already in use!");
       setIsUsernameValid(false);
     } else {
-      console.log("Username valid.FE");
       inputUsername.current?.classList.add("border-gray-400");
       inputUsername.current?.classList.remove("border-red-600");
       h6Username.current?.classList.add("hidden");
@@ -83,9 +76,7 @@ export default function SignUp() {
   };
 
   const authEmail = () => {
-    console.log("Running authEmail...FE");
     if (email.trim() === "") {
-      console.log("Email kosong.FE");
       inputEmail.current?.classList.add("border-red-600");
       inputEmail.current?.classList.remove("border-gray-400");
       h6Email.current?.classList.remove("hidden");
@@ -99,14 +90,12 @@ export default function SignUp() {
       setEmailMessage("Your email is not valid!");
       setIsEmailValid(false);
     } else if (isEmailAvailable === false) {
-      console.log("Email sudah digunakan.FE");
       inputEmail.current?.classList.add("border-red-600");
       inputEmail.current?.classList.remove("border-gray-400");
       h6Email.current?.classList.remove("hidden");
       setEmailMessage("Your email is already in use!");
       setIsEmailValid(false);
     } else {
-      console.log("Email valid.FE");
       inputEmail.current?.classList.add("border-gray-400");
       inputEmail.current?.classList.remove("border-red-600");
       h6Email.current?.classList.add("hidden");
@@ -116,23 +105,19 @@ export default function SignUp() {
   };
 
   const authPw = () => {
-    console.log("Running authPw...FE");
     if (password.trim() === "") {
-      console.log("Password kosong.FE");
       inputPassword.current?.classList.add("border-red-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
       h6Password.current?.classList.remove("hidden", "text-yellow-600");
       setPasswordMessage("Password must be filled!");
       setIsPasswordValid(false);
     } else if (password.length < 8) {
-      console.log("Password kurang dari 8 karakter.FE");
       inputPassword.current?.classList.add("border-red-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-yellow-600");
       h6Password.current?.classList.remove("hidden", "text-yellow-600");
       setPasswordMessage("Password must have at least 8 characters!");
       setIsPasswordValid(false);
     } else if (!strongPassword.test(password)) {
-      console.log("Password tidak cukup kuat.FE");
       inputPassword.current?.classList.add("border-yellow-600");
       inputPassword.current?.classList.remove("border-gray-400", "border-red-600");
       h6Password.current?.classList.remove("hidden");
@@ -140,7 +125,6 @@ export default function SignUp() {
       setPasswordMessage("Your password is not strong!");
       setIsPasswordValid(true);
     } else {
-      console.log("Password valid.FE");
       inputPassword.current?.classList.add("border-gray-400");
       inputPassword.current?.classList.remove("border-red-600", "border-yellow-600");
       h6Password.current?.classList.add("hidden");
@@ -150,21 +134,21 @@ export default function SignUp() {
     }
   };
 
-  // const userDataVerification = async () => {
-  //   try {
-  //     const [usernameCheck, emailCheck] = await Promise.all([
-  //       findUser("username", username),
-  //       findUser("email", email),
-  //     ]);
+  const userDataVerification = async () => {
+    try {
+      const [usernameCheck, emailCheck] = await Promise.all([
+        checkUser("username", username),
+        checkUser("email", email),
+      ]);
 
-  //     console.log(!usernameCheck?.found, "1");
-  //     console.log(!emailCheck?.found, "2");
-  //     setIsUsernameAvailable(!usernameCheck?.found);
-  //     setIsEmailAvailable(!emailCheck?.found);
-  //   } catch (error) {
-  //     console.log("Verification error FE:", error);
-  //   }
-  // };
+      console.log(usernameCheck?.found ?? false, "1");
+      console.log(emailCheck?.found ?? false, "2");
+      setIsUsernameAvailable(usernameCheck?.found ?? false);
+      setIsEmailAvailable(emailCheck?.found ?? false);
+    } catch (error) {
+      console.log("Verification error FE:", error);
+    }
+  };
 
   const manipulationAddDataUser = async () => {
     setIsLoading(true);
@@ -173,7 +157,7 @@ export default function SignUp() {
     authEmail();
     authPw();
 
-    // await userDataVerification();
+    await userDataVerification();
 
     setHasCheckedAvailability(true);
 
@@ -181,19 +165,24 @@ export default function SignUp() {
   };
 
   useEffect(() => {
-    if (hasCheckedAvailability && isUsernameAvailable !== null && isEmailAvailable !== null) {
+    console.log(hasCheckedAvailability, "3");
+    if (hasCheckedAvailability) {
       authUsn();
       authEmail();
+      console.log(isUsernameValid, "6");
+      console.log(isEmailValid, "7");
+      console.log(isPasswordValid, "8");
+      console.log(isUsernameAvailable, "9");
+      console.log(isEmailAvailable, "10");
 
-      if (isUsernameValid && isEmailValid && isPasswordValid && isUsernameAvailable && isEmailAvailable) {
+      if (isUsernameValid === true && isEmailValid === true && isPasswordValid === true && isUsernameAvailable === true && isEmailAvailable === true) {
         try {
           addNewDataUser(username, email, password);
           router.replace("/landing/game");
         } catch (error) {
           console.error("Verification error:", error);
-        }
-      }
-
+        };
+      };
       setHasCheckedAvailability(false);
     }
   }, [hasCheckedAvailability, isUsernameAvailable, isEmailAvailable, isUsernameValid, isEmailValid, isPasswordValid,
@@ -361,8 +350,4 @@ export default function SignUp() {
       </div>
     </main>
   );
-}
-/* 
-list bug
-1.saat input salah dan input telah diganti state availability belum diperbaharui
-*/
+};
