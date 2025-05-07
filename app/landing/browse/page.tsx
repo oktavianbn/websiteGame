@@ -10,7 +10,7 @@ export default function Games() {
         <>
             <div className="bg-[url('/asset/image/background1.png')] bg-cover bg-center min-h-screen  flex flex-col items-center justify-center text-white px-4 text-center">
                 <h1 className="text-3xl md:text-5xl font-bold mb-4">
-                    Discover Your Next Gaming 
+                    Discover Your Next Gaming
                 </h1>
                 <h1 className="text-3xl md:text-5xl font-bold mb-4">Adventure</h1>
                 <h2 className="text-sm md:text-base text-slate-300 mb-6">
@@ -30,14 +30,28 @@ export default function Games() {
                     Browse All Games
                 </button>
             </div>
-
-            <div className="w-full overflow-x-auto">
-                <div className="flex gap-6 py-4 px-2">
-                    {games.map((game) => (
-                        <div key={game.id} className="flex-shrink-0 w-72">
-                            <GameCard game={game} />
+            <div className="px-10 ">
+                <div className="w-full space-y-10 ">
+                    <div className=" overflow-x-auto">
+                        <h1 className="text-3xl font-bold">Most Searched Games</h1>
+                        <div className="flex gap-6 py-4 px-2">
+                            {games.map((game) => (
+                                <div key={game.id} className="flex-shrink-0 w-72">
+                                    <GameCard game={game} />
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    </div>
+                    <div className=" overflow-x-auto">
+                        <h1 className="text-3xl font-bold">Discover Something New</h1>
+                        <div className="flex gap-6 py-4 px-2">
+                            {games.map((game) => (
+                                <div key={game.id} className="flex-shrink-0 w-72">
+                                    <GameCard game={game} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

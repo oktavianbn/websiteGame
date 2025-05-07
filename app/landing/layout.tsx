@@ -65,17 +65,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     // Handle click outside for menus
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            // if (
+            //     langRef.current && !langRef.current.contains(event.target as Node)
+            // ) {
+            //     setLangOpen(false);
+            // }
+            
+            // if (
+            //     modeRef.current && !modeRef.current.contains(event.target as Node)
+            // ) {
+            //     setModeOpen(false);
+            // }
+            
             if (
-                langRef.current &&
-                !langRef.current.contains(event.target as Node) ||
-                modeRef.current &&
-                !modeRef.current.contains(event.target as Node)
+                sidebarRef.current && !sidebarRef.current.contains(event.target as Node)
             ) {
-                setLangOpen(false);
-                setModeOpen(false);
-            }
-
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
                 setSidebarOpen(false);
             }
         };
@@ -88,7 +92,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <>
             <nav className="dark:bg-eerie-black bg-white px-6 py-3 flex justify-between items-center border-b border-gray-800 fixed w-full z-50">
                 {/* Mobile Mode */}
-                <div className="md:hidden flex dark:bg-eerie-black text-white">
+                <div className="md:hidden flex ">
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2">
                         <Menu />
                     </button>
@@ -115,7 +119,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             </button>
                             {isModeOpen && (
                                 <div
-                                    ref={modeRef}
                                     className="mt-2 dark:bg-eerie-black bg-white rounded-lg shadow-lg py-2 w-full z-10">
                                     <button onClick={() => setMode('Dark')} className="flex items-center gap-1 px-4 py-2 dark:hover:bg-gray-700 hover:bg-slate-300 w-full"><Moon size={12} />Dark</button>
                                     <button onClick={() => setMode('Light')} className="flex items-center gap-1 px-4 py-2 dark:hover:bg-gray-700 hover:bg-slate-300 w-full"><Sun size={12} />Light</button>
@@ -132,7 +135,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             </button>
                             {isLangOpen && (
                                 <div
-                                    ref={langRef}
                                     className="mt-2 dark:bg-eerie-black rounded-lg shadow-lg py-2 w-full z-10">
                                     <button onClick={() => setLanguage('EN')} className="px-4 py-2 hover:bg-gray-700 w-full">EN</button>
                                     <button onClick={() => setLanguage('ID')} className="px-4 py-2 hover:bg-gray-700 w-full">ID</button>
